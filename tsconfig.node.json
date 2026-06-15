@@ -9,12 +9,17 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./out",
+    "baseUrl": ".",
+    "paths": {
+      "@skill-manager/scanner": ["./packages/scanner/src/index.ts"]
+    },
     "types": ["electron-vite/node"]
   },
   "include": [
     "electron.vite.config.ts",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/renderer/src/env.d.ts"
+    "src/renderer/src/env.d.ts",
+    "packages/scanner/src/**/*"
   ]
 }
