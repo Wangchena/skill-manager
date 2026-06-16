@@ -1,8 +1,10 @@
 # Skill Manager · 技能管理器
 
-> **Unified control panel for AI coding tool skills — one-click symlink management across Codex, Claude Code, and Cursor.**
+> **Your unified control center for AI coding tool skills.**
+> **Instantly discover, link, and manage skills across Codex, Claude Code, Cursor, and any custom tool — all in one place.**
 >
-> **AI 编程工具技能的集中控制台 — 一键软链接管理，跨 Codex、Claude Code、Cursor**
+> **AI 编程工具技能的集中管控中心。**
+> **一键发现、链接、管理 Codex、Claude Code、Cursor 以及任意自定义工具的技能——全部集中在一个界面。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Electron](https://img.shields.io/badge/Electron-33-blueviolet)](https://www.electronjs.org/)
@@ -11,21 +13,80 @@
 
 ---
 
-## 🚀 Highlights · 亮点速览
+## 📖 Overview · 概览
 
-| | |
-|:--|:--|
-| 🧩 **Discover all skills** · 发现所有技能 | Automatically scans every skill directory across Codex, Claude Code, Cursor, and your custom tools. No more hunting through hidden folders. <br> 自动扫描 Codex、Claude Code、Cursor 以及自定义工具的所有技能目录，无需再翻找隐藏文件夹。 |
-| 🔗 **One-click symlink** · 一键软链接 | Each skill shows per-tool toggle buttons. Click to link → a symlink is created. Click to unlink → it's removed. The original skill file is never touched. <br> 每个技能显示每个工具的开关按钮。点击即创建软链接，再点击即删除。原始技能文件不受影响。 |
-| 🏠 **Smart home detection** · 智能归属识别 | Skills are automatically detected as belonging to their physical location. The home tool is always lit and cannot be disabled — no accidental removal. <br> 技能自动识别其物理目录归属。归属工具自动点亮且不可取消，杜绝误操作。 |
-| ⚙️ **Custom tool registration** · 自定义工具注册 | Register any tool's skill directory in Settings. Each custom tool gets its own toggle column automatically. <br> 在设置中注册任意工具的技能目录，每个自定义工具自动生成专属开关列。 |
-| 💾 **Snapshot export/import** · 快照导出/导入 | Save your skill-link configuration as a JSON file and share it with your team. One-click import restores the exact setup. <br> 将你的技能链接配置导出为 JSON 文件分享给团队，一键导入即可恢复完整配置。 |
+### The Problem · 痛点
+
+AI coding assistants — Codex, Claude Code, Cursor, and many others — each maintain their **own isolated skill directories** scattered across your filesystem:
+
+| Tool · 工具 | Default path · 默认路径 |
+|---|---|
+| Codex | `~/.codex/skills/` |
+| Claude Code | `~/.agents/skills/` |
+| Cursor | `~/.cursor/skills/` |
+| ... and any custom tools you use | ... |
+
+Skills installed in one tool's folder are **invisible to all others**. Moving or copying them manually is tedious, error-prone, and quickly becomes unmanageable as your skill collection grows.
+
+每个 AI 编程助手都有自己的技能目录，技能安装在某个工具后，**其他工具完全看不到**。手动复制或移动不仅繁琐，而且随着技能增多几乎无法管理。
+
+### The Solution · 解决方案
+
+**Skill Manager** introduces **symlink-based sharing**: a single skill stays in its original location, and you create lightweight symlinks to it from any tool's directory — all with **a single click** in a clean desktop interface.
+
+**Skill Manager** 通过 **基于软链接的共享机制** 解决问题：每个技能保留在原位，只需在桌面界面中**一键点击**，即可从任意工具目录创建指向它的轻量级软链接。
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Skill Manager App                        │
+│  ┌─────────────────────┐  ┌─────────────────────────────┐  │
+│  │    Scanner           │  │    Symlink Manager          │  │
+│  │    (discovers skills) │  │    (link / unlink)          │  │
+│  └──────────┬──────────┘  └──────────────┬──────────────┘  │
+│             │                             │                  │
+└─────────────┼─────────────────────────────┼──────────────────┘
+              │                             │
+              ▼                             ▼
+    ┌─────────────────────────────────────────────┐
+    │            Filesystem (real skills)          │
+    │                                             │
+    │  ~/.codex/skills/     ~/.agents/skills/     │
+    │    ├─ my-skill/          ├─ my-skill ───────│── symlink
+    │    ├─ other-skill/       ├─ other-skill ─── │── symlink
+    │    └─ ...                └─ ...             │
+    └─────────────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Core Features · 核心功能
+
+| Feature · 功能 | Description · 说明 |
+|---|---|
+| 🧩 **Unified discovery** · 统一发现 | Scans ALL known skill paths at once — Codex, Claude, Cursor, plus any custom paths you register in Settings. No more hunting through hidden folders. <br> 一次性扫描所有已知技能路径，无需逐个翻找。 |
+| 🔗 **One-click symlink** · 一键软链接 | Every skill shows toggle buttons for every registered tool. Click to link (creates symlink), click again to unlink (removes it). The original skill file is never touched. <br> 每个技能显示所有工具的开关按钮，点击即创建软链接，再点击即删除，原始文件不受影响。 |
+| 🏠 **Smart home detection** · 智能归属 | Skills physically located in a tool's directory are automatically detected. The home tool toggle is always ON and locked — preventing accidental removal. <br> 技能自动识别归属工具，归属按钮始终开启且锁定，杜绝误操作。 |
+| ⚙️ **Extensible — custom tools** · 可扩展 | Register any tool's skill directory in Settings. Each custom tool automatically gets its own toggle column on every skill card, with symlinks created the same way as built-in tools. <br> 在设置中注册任意工具，自动生成专属开关列，软链接机制完全一致。 |
+| 💾 **Snapshot export/import** · 快照 | Save your complete link configuration as a JSON file. Share it with teammates or restore it later — one click to apply. <br> 将完整链接配置导出为 JSON 文件，分享给团队或日后恢复。 |
 
 ---
 
 ## 📸 Screenshot · 界面预览
+## 📸 Screenshot · 界面预览
 
 ![Skill Manager screenshot](docs/screenshot.png)
+
+## 🎬 Demo Video · 功能演示
+
+Check out the quick demo to see Skill Manager in action — scanning skills, one-click symlink toggling, and custom tool registration.
+
+观看快速演示视频，了解 Skill Manager 的实际操作：扫描技能、一键创建软链接、自定义工具注册。
+
+<video src="docs/demo.mp4" width="800" controls></video>
+
+> ⚡ The demo file is **`docs/demo.mp4`** (recommended < 10 MB, H.264, 1280×800, 15fps).
+>
+> 演示文件请保存为 **`docs/demo.mp4`**（建议 < 10 MB，H.264，1280×800，15fps）。
 
 ---
 
