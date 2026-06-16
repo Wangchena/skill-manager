@@ -2,7 +2,6 @@
   "name": "@skill-manager/scanner",
   "version": "0.1.0",
   "description": "Scanner interface and built-in implementations for Skill Manager",
-  "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {

@@ -4,7 +4,16 @@ import react from "@vitejs/plugin-react"
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [
+      externalizeDepsPlugin({
+        exclude: ["@skill-manager/scanner", "archiver"]
+      })
+    ],
+    resolve: {
+      alias: {
+        "@skill-manager/scanner": resolve("packages/scanner/src/index.ts")
+      }
+    }
   },
   preload: {
     plugins: [externalizeDepsPlugin()]

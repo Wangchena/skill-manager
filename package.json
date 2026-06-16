@@ -16,10 +16,13 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@skill-manager/scanner": "workspace:*",
+    "archiver": "^8.0.0",
     "js-yaml": "^4.1.0",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@types/archiver": "^8.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
@@ -28,14 +31,15 @@
     "@typescript-eslint/parser": "^8.0.0",
     "@vitejs/plugin-react": "^4.0.0",
     "electron": "^33.0.0",
-    "electron-vite": "^2.0.0",
     "electron-builder": "^25.0.0",
+    "electron-vite": "^2.0.0",
     "eslint": "^9.0.0",
     "postcss": "^8.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0",
+    "vite": "^5.0.0",
     "vitest": "^3.0.0"
   }
 }
