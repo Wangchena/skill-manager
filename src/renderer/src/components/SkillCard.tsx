@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import type { SkillRecord } from "../store/types"
+import { Folder, ChevronDown, ChevronUp } from "lucide-react"
 
 interface SkillCardProps {
   skill: SkillRecord
@@ -7,13 +8,13 @@ interface SkillCardProps {
   onToggle: (id: string) => void
 }
 
-const TOOL_BADGES: Record<string, string> = {
-  codex: "bg-blue-100 text-blue-700",
-  claude: "bg-purple-100 text-purple-700",
-  cursor: "bg-green-100 text-green-700"
+const TOOL_BADGE: Record<string, { label: string; color: string; dot: string }> = {
+  codex: { label: "Codex", color: "bg-blue-50/70 text-blue-600", dot: "bg-blue-500" },
+  claude: { label: "Claude", color: "bg-purple-50/70 text-purple-600", dot: "bg-purple-500" },
+  cursor: { label: "Cursor", color: "bg-emerald-50/70 text-emerald-600", dot: "bg-emerald-500" }
 }
 
-const DESCRIPTION_LIMIT = 120
+const DESCRIPTION_LIMIT = 140
 
 const SkillCard: React.FC<SkillCardProps> = ({ skill, enabled, onToggle }) => {
   const [expanded, setExpanded] = useState(false)
@@ -22,65 +23,82 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, enabled, onToggle }) => {
     ? skill.description
     : skill.description.slice(0, DESCRIPTION_LIMIT) + "..."
 
+  const badge = TOOL_BADGE[skill.toolOrigin] || { label: skill.toolOrigin, color: "bg-gray-50/70 text-gray-500", dot: "bg-gray-400" }
+
   return (
     <div
-      className={`flex items-start gap-3 rounded-lg border p-3 transition-colors ${
+      role="listitem"
+      className={`animate-slide-up rounded-[10px] border bg-white card-hover ${
         enabled
-          ? "border-gray-200 bg-white"
-          : "border-gray-100 bg-gray-50 opacity-60"
+          ? "border-gray-200/70 shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_0_rgba(0,0,0,0.03)]"
+          : "border-gray-100/80 shadow-none"
       }`}
+      style={{ animationDelay: "var(--delay, 0ms)" }}
     >
-      <span className="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={() => onToggle(skill.id)}
-          className="peer sr-only"
-          id={`toggle-${skill.id}`}
-        />
-        <label
-          htmlFor={`toggle-${skill.id}`}
-          className={`block h-5 w-9 cursor-pointer rounded-full transition-colors ${
-            enabled ? "bg-blue-500" : "bg-gray-300"
+      {/* Left accent bar for enabled skills */}
+      {enabled && (
+        <div className="h-1 w-full rounded-t-[10px] bg-gradient-to-r from-blue-500/0 via-blue-500/40 to-blue-500/0" />
+      )}
+
+      <div className="flex items-start gap-3.5 p-4">
+        {/* macOS-style toggle */}
+        <button
+          role="switch"
+          aria-checked={enabled}
+          aria-label={`Toggle ${skill.name}`}
+          onClick={() => onToggle(skill.id)}
+          className={`relative mt-0.5 inline-flex h-[22px] w-[38px] flex-shrink-0 cursor-pointer items-center rounded-full border-0 transition-all duration-200 ${
+            enabled
+              ? "bg-blue-500 shadow-[inset_0_1px_3px_0_rgba(0,0,0,0.15)]"
+              : "bg-gray-300 shadow-[inset_0_1px_2px_0_rgba(0,0,0,0.08)]"
           }`}
         >
           <span
-            className={`block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-              enabled ? "translate-x-[18px]" : "translate-x-0.5"
-            } mt-0.5`}
-          />
-        </label>
-      </span>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-medium text-gray-900">{skill.name}</h3>
-          <span
-            className={`rounded px-1.5 py-0.5 text-xs font-medium ${
-              TOOL_BADGES[skill.toolOrigin] || "bg-gray-100 text-gray-600"
+            className={`toggle-knob block h-[18px] w-[18px] rounded-full bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.15),0_1px_1px_0_rgba(0,0,0,0.06)] will-change-transform ${
+              enabled ? "translate-x-[18px]" : "translate-x-[2px]"
             }`}
-          >
-            {skill.toolOrigin}
-          </span>
+          />
+        </button>
+
+        <div className="min-w-0 flex-1 space-y-1.5">
+          {/* Name + badge row */}
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-[13px] font-semibold text-gray-900 leading-snug">
+              {skill.name}
+            </h3>
+            <span className={`inline-flex items-center gap-1.5 rounded-[5px] px-2 py-[2px] text-[11px] font-medium leading-relaxed ${badge.color}`}>
+              <span className={`inline-block h-[5px] w-[5px] rounded-full ${badge.dot} ${enabled ? "badge-dot-active" : ""}`} />
+              {badge.label}
+            </span>
+          </div>
+
+          {/* Description */}
+          {skill.description && (
+            <div className="text-[13px]/5 text-gray-500">
+              <span>{displayDesc}</span>
+              {needsTruncation && (
+                <button
+                  onClick={() => setExpanded(!expanded)}
+                  className="inline-flex items-center gap-0.5 text-blue-500 hover:text-blue-600 transition-colors ml-0.5 font-medium align-baseline"
+                >
+                  {expanded ? (
+                    <ChevronUp className="inline-block h-3 w-3" />
+                  ) : (
+                    <ChevronDown className="inline-block h-3 w-3" />
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Source path */}
+          <div className="flex items-center gap-1.5">
+            <Folder className="h-[10px] w-[10px] text-gray-300 flex-shrink-0" />
+            <p className="truncate text-[11px] text-gray-400/70" title={skill.sourcePath}>
+              {skill.sourcePath}
+            </p>
+          </div>
         </div>
-
-        {skill.description && (
-          <p className="mt-1 text-xs text-gray-500">
-            {displayDesc}
-            {needsTruncation && (
-              <button
-                onClick={() => setExpanded(!expanded)}
-                className="ml-1 text-blue-500 hover:text-blue-700"
-              >
-                {expanded ? "less" : "more"}
-              </button>
-            )}
-          </p>
-        )}
-
-        <p className="mt-1 truncate text-xs text-gray-400" title={skill.sourcePath}>
-          {skill.sourcePath}
-        </p>
       </div>
     </div>
   )
