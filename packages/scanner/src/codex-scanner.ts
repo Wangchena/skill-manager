@@ -38,11 +38,11 @@ export class CodexScanner extends Scanner {
     return skills
   }
 
-  private async parseSkill(dir: string): Promise<SkillRecord | null> {
+    private async parseSkill(dir: string): Promise<SkillRecord | null> {
     try {
       const skillId = basename(dir)
 
-      // Try SKILL.md frontmatter first (compound-engineering style)
+      // Try SKILL.md frontmatter first
       const skillMdPath = join(dir, "SKILL.md")
       if (existsSync(skillMdPath)) {
         const content = await readFile(skillMdPath, "utf-8")
@@ -53,8 +53,8 @@ export class CodexScanner extends Scanner {
             name: frontmatter.name,
             description: frontmatter.description || "",
             sourcePath: dir,
-            toolOrigin: "codex",
-            formatVersion: "1"
+            linkedTools: ["codex"],
+            homeTool: "codex"
           }
         }
       }
@@ -65,7 +65,8 @@ export class CodexScanner extends Scanner {
         name: skillId,
         description: "",
         sourcePath: dir,
-        toolOrigin: "codex"
+        linkedTools: ["codex"],
+        homeTool: "codex"
       }
     } catch {
       return null

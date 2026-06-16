@@ -3,6 +3,7 @@ import { ScannerOrchestrator } from "./scanner-orchestrator"
 import { SnapshotManager } from "./snapshot-manager"
 import { SkillExporter } from "./skill-exporter"
 import { SettingsStore } from "./settings-store"
+import { setCustomToolDirs } from "./scanner-orchestrator"
 
 export function registerIpcHandlers(): void {
   const orchestrator = new ScannerOrchestrator()
@@ -11,8 +12,28 @@ export function registerIpcHandlers(): void {
   const settingsStore = new SettingsStore()
 
   ipcMain.handle("scan", async () => {
+    const settings = await settingsStore.load()
+    if (settings.customTools) {
+      setCustomToolDirs(settings.customTools)
+    }
     return orchestrator.scanAll()
   })
+  ipcMain.handle("link-skill", async (_event, payload: { skillPath: string; toolName: string }) => {
+    const settings = await settingsStore.load()
+    if (settings.customTools) {
+      setCustomToolDirs(settings.customTools)
+    }
+    return orchestrator.linkSkill(payload.skillPath, payload.toolName)
+  })
+
+  ipcMain.handle("unlink-skill", async (_event, payload: { skillPath: string; toolName: string }) => {
+    const settings = await settingsStore.load()
+    if (settings.customTools) {
+      setCustomToolDirs(settings.customTools)
+    }
+    return orchestrator.unlinkSkill(payload.skillPath, payload.toolName)
+  })
+
 
   ipcMain.handle("export-snapshot", async (_event, data: unknown) => {
     const { filePath } = await dialog.showSaveDialog({

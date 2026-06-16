@@ -9,14 +9,14 @@ interface ExportDialogProps {
 }
 
 const ExportDialog: React.FC<ExportDialogProps> = ({ open, onClose }) => {
-  const { skills, enabledIds } = useSkillStore()
+  const { skills } = useSkillStore()
   const [label, setLabel] = useState("")
   const [exporting, setExporting] = useState(false)
   const [done, setDone] = useState(false)
 
   if (!open) return null
 
-  const enabledSkills = skills.filter((s) => enabledIds.has(s.id))
+  const enabledSkills = skills
 
   const handleExport = async () => {
     setExporting(true)
@@ -26,7 +26,7 @@ const ExportDialog: React.FC<ExportDialogProps> = ({ open, onClose }) => {
         skills: enabledSkills.map((s) => ({
           id: s.id,
           name: s.name,
-          toolOrigin: s.toolOrigin,
+          linkedTools: s.linkedTools,
           sourcePath: s.sourcePath
         }))
       }

@@ -13,6 +13,12 @@ const api = {
   downloadSkill: (skillPath: string): Promise<string | null> =>
     ipcRenderer.invoke("download-skill", skillPath),
 
+  linkSkill: (skillPath: string, toolName: string): Promise<boolean> =>
+    ipcRenderer.invoke("link-skill", { skillPath, toolName }),
+
+  unlinkSkill: (skillPath: string, toolName: string): Promise<boolean> =>
+    ipcRenderer.invoke("unlink-skill", { skillPath, toolName }),
+
   getSettings: (): Promise<Record<string, unknown>> =>
     ipcRenderer.invoke("get-settings"),
 

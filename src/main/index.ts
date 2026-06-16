@@ -1,11 +1,17 @@
-import { app, BrowserWindow, shell } from "electron"
-import { join } from "path"
+import { app, BrowserWindow, nativeImage, shell } from "electron"
+import { join, resolve } from "path"
 import { registerIpcHandlers } from "./ipc-handlers"
 
 let mainWindow: BrowserWindow | null = null
 
 function createWindow(): void {
+  const iconPath = app.isPackaged
+    ? join(process.resourcesPath, "icon.png")
+    : resolve(__dirname, "../../build/icon.png")
+  const icon = nativeImage.createFromPath(iconPath)
+
   mainWindow = new BrowserWindow({
+    icon: icon,
     width: 960,
     height: 700,
     minWidth: 720,
@@ -33,8 +39,28 @@ function createWindow(): void {
   }
 }
 
+// Set app name (affects macOS dock tooltip, menu bar, About panel)
+// Override Electron's macOS dock label, menu bar, and About panel
+app.name = "Skill Manager"
+
+if (process.platform === "darwin") {
+  // Force Dock refresh by reading the name back
+  const _ = app.name
+  app.setAboutPanelOptions({ applicationName: "Skill Manager" })
+}
+
 app.whenReady().then(() => {
   registerIpcHandlers()
+  // Set macOS dock icon
+  if (process.platform === "darwin") {
+    const dockIconPath = app.isPackaged
+      ? join(process.resourcesPath, "icon.png")
+      : resolve(__dirname, "../../build/icon.png")
+    const dockIcon = nativeImage.createFromPath(dockIconPath)
+    if (!dockIcon.isEmpty()) {
+      app.dock.setIcon(dockIcon)
+    }
+  }
   createWindow()
 
   app.on("activate", () => {

@@ -3,3 +3,8 @@ out/
 dist/
 *.log
 .vite/
+.DS_Store
+*.local
+settings.json
+docs/brainstorms/
+docs/plans/

@@ -59,7 +59,7 @@ export class CursorScanner extends Scanner {
           name: manifest.name || skillId,
           description: manifest.description || "",
           sourcePath: dir,
-          toolOrigin: "cursor",
+          linkedTools: ["cursor"], homeTool: "cursor",
           formatVersion: manifest.version?.toString()
         }
       }
@@ -70,7 +70,7 @@ export class CursorScanner extends Scanner {
         name: skillId,
         description: "",
         sourcePath: dir,
-        toolOrigin: "cursor"
+        linkedTools: ["cursor"], homeTool: "cursor"
       }
     } catch {
       return null

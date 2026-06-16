@@ -1,14 +1,16 @@
 export interface SkillRecord {
-  /** Unique identifier derived from source path */
+  /** Unique identifier derived from the skill directory name */
   id: string
-  /** Display name of the skill */
+  /** Display name of the skill (from SKILL.md frontmatter) */
   name: string
   /** Short description of what the skill does */
   description: string
-  /** Absolute path to the skill's directory on disk */
+  /** Absolute path to the skill's directory on disk (the actual location) */
   sourcePath: string
-  /** Which AI tool this skill belongs to (e.g. "codex", "claude", "cursor") */
-  toolOrigin: string
+  /** Which tool(s) this skill is currently linked to (symlinked into) */
+  linkedTools: string[]
+  /** Which tool this skill physically belongs to (detected from its sourcePath) */
+  homeTool?: string
   /** Format version of the skill's manifest, if detected */
   formatVersion?: string
 }

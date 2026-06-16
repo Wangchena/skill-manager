@@ -1,36 +1,32 @@
 import { create } from "zustand"
 import api from "../ipc-client"
 
-interface ScannerPathOverrides {
-  [toolName: string]: string
+interface CustomTool {
+  name: string
+  path: string
 }
 
 interface SettingsStore {
-  pathOverrides: ScannerPathOverrides
-  enabledTools: string[]
+  customTools: CustomTool[]
   loaded: boolean
 
   load: () => Promise<void>
-  setPathOverride: (tool: string, path: string) => void
-  removePathOverride: (tool: string) => void
-  toggleTool: (tool: string) => void
+  addCustomTool: (name: string, path: string) => void
+  removeCustomTool: (name: string) => void
   save: () => Promise<void>
 }
 
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
-  pathOverrides: {},
-  enabledTools: [],
+  customTools: [],
   loaded: false,
 
   load: async () => {
     try {
       const settings = (await api.getSettings()) as {
-        scannerPaths?: Record<string, string>
-        enabledTools?: string[]
+        customTools?: { name: string; path: string }[]
       }
       set({
-        pathOverrides: settings.scannerPaths || {},
-        enabledTools: settings.enabledTools || [],
+        customTools: settings.customTools || [],
         loaded: true
       })
     } catch {
@@ -38,26 +34,18 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     }
   },
 
-  setPathOverride: (tool: string, path: string) => {
-    const overrides = { ...get().pathOverrides, [tool]: path }
-    set({ pathOverrides: overrides })
+  addCustomTool: (name: string, path: string) => {
+    const tools = [...get().customTools, { name, path }]
+    set({ customTools: tools })
   },
 
-  removePathOverride: (tool: string) => {
-    const { [tool]: _, ...rest } = get().pathOverrides
-    set({ pathOverrides: rest })
-  },
-
-  toggleTool: (tool: string) => {
-    const current = get().enabledTools
-    const next = current.includes(tool)
-      ? current.filter((t) => t !== tool)
-      : [...current, tool]
-    set({ enabledTools: next })
+  removeCustomTool: (name: string) => {
+    const tools = get().customTools.filter((t) => t.name !== name)
+    set({ customTools: tools })
   },
 
   save: async () => {
-    const { pathOverrides, enabledTools } = get()
-    await api.saveSettings({ scannerPaths: pathOverrides, enabledTools })
+    const { customTools } = get()
+    await api.saveSettings({ customTools })
   }
 }))

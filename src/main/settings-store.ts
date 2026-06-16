@@ -6,6 +6,7 @@ import { existsSync } from "fs"
 interface Settings {
   scannerPaths?: Record<string, string>
   enabledTools?: string[]
+  customTools?: { name: string; path: string }[]
 }
 
 const SETTINGS_PATH = join(homedir(), ".skill-manager", "settings.json")

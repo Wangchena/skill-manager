@@ -3,28 +3,24 @@ export interface SkillRecord {
   name: string
   description: string
   sourcePath: string
-  toolOrigin: string
+  linkedTools: string[]
+  homeTool?: string
   formatVersion?: string
 }
 
 export interface ScanResult {
   skills: SkillRecord[]
+  availableTools: string[]
 }
 
 export type ScanStatus = "idle" | "scanning" | "done" | "error"
 
 export interface SkillStore {
   skills: SkillRecord[]
-  enabledIds: Set<string>
   scanStatus: ScanStatus
   error: string | null
   scan: () => Promise<void>
-  toggleSkill: (id: string) => void
-  enableAll: () => void
-  disableAll: () => void
-  setEnabledIds: (ids: string[]) => void
-  enabledSkills: SkillRecord[]
-  totalCount: number
-  enabledCount: number
-  groupedByTool: Record<string, SkillRecord[]>
+  linkSkill: (skillPath: string, toolName: string) => Promise<void>
+  unlinkSkill: (skillPath: string, toolName: string) => Promise<void>
+  availableTools: string[]
 }

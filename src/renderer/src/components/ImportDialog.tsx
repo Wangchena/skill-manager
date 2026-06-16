@@ -14,7 +14,7 @@ interface ImportResult {
 }
 
 const ImportDialog: React.FC<ImportDialogProps> = ({ open, onClose }) => {
-  const { skills, setEnabledIds } = useSkillStore()
+  const { skills, scan } = useSkillStore()
   const [result, setResult] = useState<ImportResult | null>(null)
   const [importing, setImporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,9 +53,10 @@ const ImportDialog: React.FC<ImportDialogProps> = ({ open, onClose }) => {
     setImporting(false)
   }
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (result) {
-      setEnabledIds(result.matched.map((s) => s.id))
+      // Re-scan will pick up any newly linked skills
+      await scan()
     }
     handleClose()
   }

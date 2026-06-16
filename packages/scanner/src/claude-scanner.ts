@@ -39,7 +39,7 @@ export class ClaudeScanner extends Scanner {
     return skills
   }
 
-  private async parseSkill(dir: string): Promise<SkillRecord | null> {
+    private async parseSkill(dir: string): Promise<SkillRecord | null> {
     try {
       const skillId = basename(dir)
       const skillMdPath = join(dir, "SKILL.md")
@@ -51,10 +51,11 @@ export class ClaudeScanner extends Scanner {
 
       return {
         id: skillId,
-        name: frontmatter?.name || skillId,
-        description: frontmatter?.description || "",
+        name: (typeof frontmatter?.name === "string" ? frontmatter.name : null) || skillId,
+        description: (typeof frontmatter?.description === "string" ? frontmatter.description : "") || "",
         sourcePath: dir,
-        toolOrigin: "claude",
+        linkedTools: ["claude"],
+        homeTool: "claude",
         formatVersion: frontmatter?.version?.toString()
       }
     } catch {
@@ -67,6 +68,6 @@ export class ClaudeScanner extends Scanner {
   ): Record<string, unknown> | null {
     const match = content.match(/^---\n([\s\S]*?)\n---/)
     if (!match) return null
-    return yaml.load(match[1]) as Record<string, unknown> | null
+    return yaml.load(match[1]) as Record<string, unknown> | null as Record<string, unknown> | null
   }
 }
