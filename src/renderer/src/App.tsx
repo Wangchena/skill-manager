@@ -5,6 +5,11 @@ import SkillCard from "./components/SkillCard"
 import SummaryBar from "./components/SummaryBar"
 import EmptyState from "./components/EmptyState"
 import RefreshButton from "./components/RefreshButton"
+import ExportDialog from "./components/ExportDialog"
+import ImportDialog from "./components/ImportDialog"
+import SettingsPanel from "./components/SettingsPanel"
+
+type ActivePanel = "export" | "import" | "settings" | null
 
 const App: React.FC = () => {
   const {
@@ -18,6 +23,7 @@ const App: React.FC = () => {
   } = useSkillStore()
 
   const [activeTab, setActiveTab] = useState<string>("")
+  const [activePanel, setActivePanel] = useState<ActivePanel>(null)
 
   useEffect(() => {
     scan()
@@ -32,7 +38,6 @@ const App: React.FC = () => {
   }, [tools, activeTab])
 
   const currentSkills = skills.filter((s) => s.toolOrigin === activeTab)
-
   const totalCount = skills.length
   const enabledCount = enabledIds.size
   const isLoading = scanStatus === "scanning"
@@ -49,6 +54,19 @@ const App: React.FC = () => {
           {totalCount > 0 && (
             <>
               <button
+                onClick={() => setActivePanel("export")}
+                className="rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Export
+              </button>
+              <button
+                onClick={() => setActivePanel("import")}
+                className="rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Import
+              </button>
+              <span className="h-4 w-px bg-gray-200" />
+              <button
                 onClick={enableAll}
                 className="rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100"
               >
@@ -63,6 +81,16 @@ const App: React.FC = () => {
             </>
           )}
           <RefreshButton onClick={scan} loading={isLoading} />
+          <button
+            onClick={() => setActivePanel("settings")}
+            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            title="Settings"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -72,7 +100,9 @@ const App: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <TabBar tools={tools} activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="px-6">
+        <TabBar tools={tools} activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto px-6 py-4">
@@ -92,7 +122,7 @@ const App: React.FC = () => {
         {!isLoading && scanStatus === "done" && tools.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-sm text-gray-400">
-              No skills found. Install some skills first.
+              No skills found. Install some skills first, then refresh.
             </p>
           </div>
         )}
@@ -113,15 +143,21 @@ const App: React.FC = () => {
             ))}
           </div>
         )}
-
-        {!isLoading && scanStatus === "idle" && (
-          <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-sm text-gray-400">
-              Press Refresh to scan for skills.
-            </p>
-          </div>
-        )}
       </main>
+
+      {/* Modals */}
+      <ExportDialog
+        open={activePanel === "export"}
+        onClose={() => setActivePanel(null)}
+      />
+      <ImportDialog
+        open={activePanel === "import"}
+        onClose={() => setActivePanel(null)}
+      />
+      <SettingsPanel
+        open={activePanel === "settings"}
+        onClose={() => setActivePanel(null)}
+      />
     </div>
   )
 }
