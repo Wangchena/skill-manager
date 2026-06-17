@@ -5,9 +5,10 @@ import { X, Plus, Trash2, Package, Code2, Sparkles, Terminal } from "lucide-reac
 interface SettingsPanelProps {
   open: boolean
   onClose: () => void
+  onSaved?: () => void
 }
 
-const SettingsPanel: React.FC<SettingsPanelProps> = ({ open, onClose }) => {
+const SettingsPanel: React.FC<SettingsPanelProps> = ({ open, onClose, onSaved }) => {
   const { customTools, loaded, load, addCustomTool, removeCustomTool, save } =
     useSettingsStore()
   const [saving, setSaving] = useState(false)
@@ -36,6 +37,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ open, onClose }) => {
     setSaving(true)
     await save()
     setSaving(false)
+    onSaved?.()
     onClose()
   }
 

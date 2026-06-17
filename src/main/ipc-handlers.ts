@@ -13,24 +13,18 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle("scan", async () => {
     const settings = await settingsStore.load()
-    if (settings.customTools) {
-      setCustomToolDirs(settings.customTools)
-    }
+    setCustomToolDirs(settings.customTools ?? [])
     return orchestrator.scanAll()
   })
   ipcMain.handle("link-skill", async (_event, payload: { skillPath: string; toolName: string }) => {
     const settings = await settingsStore.load()
-    if (settings.customTools) {
-      setCustomToolDirs(settings.customTools)
-    }
+    setCustomToolDirs(settings.customTools ?? [])
     return orchestrator.linkSkill(payload.skillPath, payload.toolName)
   })
 
   ipcMain.handle("unlink-skill", async (_event, payload: { skillPath: string; toolName: string }) => {
     const settings = await settingsStore.load()
-    if (settings.customTools) {
-      setCustomToolDirs(settings.customTools)
-    }
+    setCustomToolDirs(settings.customTools ?? [])
     return orchestrator.unlinkSkill(payload.skillPath, payload.toolName)
   })
 
@@ -67,6 +61,6 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle("save-settings", async (_event, settings) => {
-    settingsStore.save(settings)
+    await settingsStore.save(settings)
   })
 }

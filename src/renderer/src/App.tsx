@@ -146,7 +146,7 @@ const App: React.FC = () => {
 
       <ExportDialog open={activePanel === "export"} onClose={() => setActivePanel(null)} />
       <ImportDialog open={activePanel === "import"} onClose={() => setActivePanel(null)} />
-      <SettingsPanel open={activePanel === "settings"} onClose={() => setActivePanel(null)} />
+      <SettingsPanel open={activePanel === "settings"} onClose={() => setActivePanel(null)} onSaved={scan} />
     </div>
   )
 }

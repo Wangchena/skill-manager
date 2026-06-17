@@ -22,10 +22,17 @@ const BUILTIN_TOOLS: Record<string, string[]> = {
 
 let customToolDirs: Record<string, string[]> = {}
 
+/** Expand leading `~` or `~/` to the user's home directory */
+function expandPath(p: string): string {
+  if (p === "~") return homedir()
+  if (p.startsWith("~/")) return join(homedir(), p.slice(2))
+  return p
+}
+
 export function setCustomToolDirs(tools: { name: string; path: string }[]): void {
   customToolDirs = {}
   for (const t of tools) {
-    customToolDirs[t.name] = [t.path]
+    customToolDirs[t.name] = [expandPath(t.path)]
   }
 }
 
